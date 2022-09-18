@@ -8,8 +8,11 @@ section .text
         global _start
 
 _start:
-        add_64 5, 6
-        deb_64_hex rax
+        mov rax, 4
+        mul_64 5, 6
+        div_64 rax, 4
+        deb_64 rax
+        deb_64 rax
 
         mov rax, 60
         xor rdi, rdi

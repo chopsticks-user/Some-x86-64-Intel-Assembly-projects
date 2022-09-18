@@ -65,15 +65,20 @@ _deb_64_hex:
         jnz .iterate
         ret
 
-%macro deb_32_hex 1
+%macro deb_32 1
         mov edi, %1
         call _deb_32_hex
+        call _deb_32_endline
 %endmacro
-%macro deb_64_hex 1
+%macro deb_64 1
         mov rdi, %1
         call _deb_64_hex
+        call _deb_64_endline
 %endmacro
-%macro deb_el 0
-        
+%macro deb_32_el 0
+        call _deb_32_endline
+%endmacro
+%macro deb_64_el 0
+        call _deb_64_endline
 %endmacro
 %endif

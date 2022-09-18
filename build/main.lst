@@ -138,18 +138,23 @@
     68 00000065 75DE                <1>         jnz .iterate
     69 00000067 C3                  <1>         ret
     70                              <1> 
-    71                              <1> %macro deb_32_hex 1
+    71                              <1> %macro deb_32 1
     72                              <1>         mov edi, %1
     73                              <1>         call _deb_32_hex
-    74                              <1> %endmacro
-    75                              <1> %macro deb_64_hex 1
-    76                              <1>         mov rdi, %1
-    77                              <1>         call _deb_64_hex
-    78                              <1> %endmacro
-    79                              <1> %macro deb_el 0
-    80                              <1>         
-    81                              <1> %endmacro
-    82                              <1> %endif
+    74                              <1>         call _deb_32_endline
+    75                              <1> %endmacro
+    76                              <1> %macro deb_64 1
+    77                              <1>         mov rdi, %1
+    78                              <1>         call _deb_64_hex
+    79                              <1>         ; call _deb_64_endline
+    80                              <1> %endmacro
+    81                              <1> %macro deb_32_el 0
+    82                              <1>         call _deb_32_endline
+    83                              <1> %endmacro
+    84                              <1> %macro deb_64_el 0
+    85                              <1>         call _deb_64_endline
+    86                              <1> %endmacro
+    87                              <1> %endif
      4                                  
      5                                  section .data
      6                                  section .bss
@@ -157,13 +162,24 @@
      8                                          global _start
      9                                  
     10                                  _start:
-    11                                          add_64 5, 6
-    14 00000068 B805000000          <1>  mov rax, %1
-    15 0000006D 4883C006            <1>  add rax, %2
-    12                                          deb_64_hex rax
-    76 00000071 4889C7              <1>  mov rdi, %1
-    77 00000074 E8BAFFFFFF          <1>  call _deb_64_hex
-    13                                  
-    14 00000079 B83C000000                      mov rax, 60
-    15 0000007E 4831FF                          xor rdi, rdi
-    16 00000081 0F05                            syscall
+    11 00000068 B804000000                      mov rax, 4
+    12                                          mul_64 5, 6
+    36 0000006D B805000000          <1>  mov rax, %1
+    37 00000072 486BC006            <1>  imul rax, %2
+    13                                          div_64 rax, 4
+    48 00000076 4889C0              <1>  mov rax, %1
+    49 00000079 BB04000000          <1>  mov rbx, %2
+    50 0000007E 99                  <1>  cdq
+    51 0000007F 48F7FB              <1>  idiv rbx
+    14                                          deb_64 rax
+    77 00000082 4889C7              <1>  mov rdi, %1
+    78 00000085 E8A9FFFFFF          <1>  call _deb_64_hex
+    79                              <1> 
+    15                                          deb_64 rax
+    77 0000008A 4889C7              <1>  mov rdi, %1
+    78 0000008D E8A1FFFFFF          <1>  call _deb_64_hex
+    79                              <1> 
+    16                                  
+    17 00000092 B83C000000                      mov rax, 60
+    18 00000097 4831FF                          xor rdi, rdi
+    19 0000009A 0F05                            syscall
