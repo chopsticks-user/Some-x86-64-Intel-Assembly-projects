@@ -1,0 +1,83 @@
+     1                                  ; x86_64 Intel Assembly
+     2                                  %include "math.asm"
+     3                              <1> ; Math utility macro functions
+     4                              <1> 
+     5                              <1> ; Perform the addition of 2 numbers and return the result to 
+     6                              <1> ; either the register <eax> or <rax>
+     7                              <1> %macro add_32 2
+     8                              <1>         mov eax, %1
+     9                              <1>         add eax, %2
+    10                              <1> %endmacro
+    11                              <1> %macro add_64 2
+    12                              <1>         mov rax, %1
+    13                              <1>         add rax, %2
+    14                              <1> %endmacro
+    15                              <1> 
+    16                              <1> ; Perform the substraction of 2 numbers and return the result to 
+    17                              <1> ; either the register <eax> or <rax>
+    18                              <1> %macro sub_32 2
+    19                              <1>         mov eax, %1
+    20                              <1>         sub eax, %2
+    21                              <1> %endmacro
+    22                              <1> %macro sub_64 2
+    23                              <1>         mov rax, %1
+    24                              <1>         sub rax, %2
+    25                              <1> %endmacro
+    26                              <1> 
+    27                              <1> ; Multiply 2 numbers and return the result to 
+    28                              <1> ; either the register <eax> or <rax>
+    29                              <1> %macro mul_32 2
+    30                              <1>         mov eax, %1
+    31                              <1>         imul eax, %2
+    32                              <1> %endmacro
+    33                              <1> %macro mul_64 2
+    34                              <1>         mov rax, %1
+    35                              <1>         imul rax, %2
+    36                              <1> %endmacro
+    37                              <1> 
+    38                              <1> ; Devide %1 by %2 and return the result to 
+    39                              <1> ; either the register <eax> or <rax>
+    40                              <1> %macro div_32 2
+    41                              <1>         mov eax, %1
+    42                              <1>         cdq
+    43                              <1>         idiv %2
+    44                              <1> %endmacro
+    45                              <1> %macro div_64 2
+    46                              <1>         mov rax, %1
+    47                              <1>         cdq
+    48                              <1>         idiv %2
+    49                              <1> %endmacro
+    50                              <1> 
+    51                              <1> ; Devide %1 by %2 and return the result to 
+    52                              <1> ; either the register <eax> or <rax>
+    53                              <1> %macro mod_32 2
+    54                              <1>         mov eax, %1
+    55                              <1>         cdq
+    56                              <1>         idiv %2
+    57                              <1>         mov eax, edx
+    58                              <1> %endmacro
+    59                              <1> %macro mod_64 2
+    60                              <1>         mov rax, %1
+    61                              <1>         cdq
+    62                              <1>         idiv %2
+    63                              <1>         mov rax, rdx
+    64                              <1> %endmacro
+     3                                  
+     4                                  section .data
+     5                                  section .bss
+     6                                  section .text
+     7                                          global _start
+     8                                  
+     9                                  _start:
+    10 00000000 BF48000000                      mov edi, 72
+    11 00000005 BE41000000                      mov esi, 65
+    12                                          mul_32 edi, esi
+    30 0000000A 89F8                <1>  mov eax, %1
+    31 0000000C 0FAFC6              <1>  imul eax, %2
+    13                                          mul_32 eax, 100
+    30 0000000F 89C0                <1>  mov eax, %1
+    31 00000011 6BC064              <1>  imul eax, %2
+    14                                  
+    15 00000014 B83C000000                      mov eax, 60
+    16 00000019 31FF                            xor edi, edi
+    17 0000001B 0F05                            syscall
