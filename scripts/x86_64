@@ -1,0 +1,4 @@
+#!bin/bash
+
+alias run=./build/main
+alias deb="gdb build/main"

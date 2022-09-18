@@ -1,5 +1,6 @@
 ; x86_64 Intel Assembly
-%include "math.asm"
+%include "src/math.asm"
+%include "src/debug.asm"
 
 section .data
 section .bss
@@ -7,11 +8,9 @@ section .text
         global _start
 
 _start:
-        mov edi, 72
-        mov esi, 65
-        mul_32 edi, esi
-        mul_32 eax, 100
+        add_64 5, 6
+        deb_64_hex rax
 
-        mov eax, 60
-        xor edi, edi
+        mov rax, 60
+        xor rdi, rdi
         syscall

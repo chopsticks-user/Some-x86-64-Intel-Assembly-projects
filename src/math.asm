@@ -1,4 +1,6 @@
 ; Math utility macro functions
+%ifndef MATH_ASM
+        %define MATH_ASM
 
 ; Perform the addition of 2 numbers and return the result to 
 ; either the register <eax> or <rax>
@@ -33,30 +35,34 @@
         imul rax, %2
 %endmacro
 
-; Devide %1 by %2 and return the result to 
-; either the register <eax> or <rax>
+; Devide %1 by %2
 %macro div_32 2
         mov eax, %1
+        mov ebx, %2
         cdq
-        idiv %2
+        idiv ebx
 %endmacro
 %macro div_64 2
         mov rax, %1
+        mov rbx, %2
         cdq
-        idiv %2
+        idiv rbx
 %endmacro
 
-; Devide %1 by %2 and return the result to 
-; either the register <eax> or <rax>
+; %1 mod %2
 %macro mod_32 2
         mov eax, %1
+        mov ebx, %2
         cdq
-        idiv %2
+        idiv ebx
         mov eax, edx
 %endmacro
 %macro mod_64 2
         mov rax, %1
+        mov rbx, %2
         cdq
-        idiv %2
+        idiv rbx
         mov rax, rdx
 %endmacro
+
+%endif
