@@ -1,6 +1,7 @@
 ; Debugging utility macro functions
-%ifndef DEBUG_ASM
-%define DEBUG_ASM
+%ifndef DEBUG_INC
+%define DEBUG_INC
+
 section .data
         hex_codes: db "0123456789ABCDEF"
         newline_char: db 10
@@ -81,4 +82,5 @@ _deb_64_hex:
 %macro deb_64_el 0
         call _deb_64_endline
 %endmacro
+
 %endif

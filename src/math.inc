@@ -1,6 +1,6 @@
 ; Math utility macro functions
-%ifndef MATH_ASM
-        %define MATH_ASM
+%ifndef MATH_INC
+%define MATH_INC
 
 ; Perform the addition of 2 numbers and return the result to 
 ; either the register <eax> or <rax>
