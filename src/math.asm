@@ -38,31 +38,15 @@
 ; Devide %1 by %2
 %macro div_32 2
         mov eax, %1
-        mov ebx, %2
+        mov edi, %2
         cdq
-        idiv ebx
+        idiv edi
 %endmacro
 %macro div_64 2
         mov rax, %1
-        mov rbx, %2
+        mov rdi, %2
         cdq
-        idiv rbx
-%endmacro
-
-; %1 mod %2
-%macro mod_32 2
-        mov eax, %1
-        mov ebx, %2
-        cdq
-        idiv ebx
-        mov eax, edx
-%endmacro
-%macro mod_64 2
-        mov rax, %1
-        mov rbx, %2
-        cdq
-        idiv rbx
-        mov rax, rdx
+        idiv rdi
 %endmacro
 
 %endif

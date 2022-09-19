@@ -1,185 +1,44 @@
      1                                  ; x86_64 Intel Assembly
-     2                                  %include "src/math.asm"
-     3                              <1> ; Math utility macro functions
-     4                              <1> %ifndef MATH_ASM
-     5                              <1>         %define MATH_ASM
-     6                              <1> 
-     7                              <1> ; Perform the addition of 2 numbers and return the result to 
-     8                              <1> ; either the register <eax> or <rax>
-     9                              <1> %macro add_32 2
-    10                              <1>         mov eax, %1
-    11                              <1>         add eax, %2
-    12                              <1> %endmacro
-    13                              <1> %macro add_64 2
-    14                              <1>         mov rax, %1
-    15                              <1>         add rax, %2
-    16                              <1> %endmacro
-    17                              <1> 
-    18                              <1> ; Perform the substraction of 2 numbers and return the result to 
-    19                              <1> ; either the register <eax> or <rax>
-    20                              <1> %macro sub_32 2
-    21                              <1>         mov eax, %1
-    22                              <1>         sub eax, %2
-    23                              <1> %endmacro
-    24                              <1> %macro sub_64 2
-    25                              <1>         mov rax, %1
-    26                              <1>         sub rax, %2
-    27                              <1> %endmacro
-    28                              <1> 
-    29                              <1> ; Multiply 2 numbers and return the result to 
-    30                              <1> ; either the register <eax> or <rax>
-    31                              <1> %macro mul_32 2
-    32                              <1>         mov eax, %1
-    33                              <1>         imul eax, %2
-    34                              <1> %endmacro
-    35                              <1> %macro mul_64 2
-    36                              <1>         mov rax, %1
-    37                              <1>         imul rax, %2
-    38                              <1> %endmacro
-    39                              <1> 
-    40                              <1> ; Devide %1 by %2
-    41                              <1> %macro div_32 2
-    42                              <1>         mov eax, %1
-    43                              <1>         mov ebx, %2
-    44                              <1>         cdq
-    45                              <1>         idiv ebx
-    46                              <1> %endmacro
-    47                              <1> %macro div_64 2
-    48                              <1>         mov rax, %1
-    49                              <1>         mov rbx, %2
-    50                              <1>         cdq
-    51                              <1>         idiv rbx
-    52                              <1> %endmacro
-    53                              <1> 
-    54                              <1> ; %1 mod %2
-    55                              <1> %macro mod_32 2
-    56                              <1>         mov eax, %1
-    57                              <1>         mov ebx, %2
-    58                              <1>         cdq
-    59                              <1>         idiv ebx
-    60                              <1>         mov eax, edx
-    61                              <1> %endmacro
-    62                              <1> %macro mod_64 2
-    63                              <1>         mov rax, %1
-    64                              <1>         mov rbx, %2
-    65                              <1>         cdq
-    66                              <1>         idiv rbx
-    67                              <1>         mov rax, rdx
-    68                              <1> %endmacro
-    69                              <1> 
-    70                              <1> %endif
-     3                                  %include "src/debug.asm"
-     4                              <1> ; Debugging utility macro functions
-     5                              <1> %ifndef DEBUG_ASM
-     6                              <1> %define DEBUG_ASM
-     7                              <1> section .data
-     8 00000000 303132333435363738- <1>         hex_codes: db "0123456789ABCDEF"
-     8 00000009 39414243444546      <1>
-     9 00000010 0A                  <1>         newline_char: db 10
-    10                              <1> section .bss
-    11                              <1> section .text
-    12                              <1>         global _deb_64_endline
-    13                              <1>         global _deb_64_hex
-    14                              <1> 
-    15                              <1> _deb_32_endline:
-    16 00000000 B801000000          <1>     mov eax, 1
-    17 00000005 BF01000000          <1>     mov edi, 1
-    18 0000000A BE[10000000]        <1>     mov esi, newline_char
-    19 0000000F BA01000000          <1>     mov edx, 1
-    20 00000014 0F05                <1>     syscall
-    21 00000016 C3                  <1>     ret
-    22                              <1> 
-    23                              <1> _deb_64_endline:
-    24 00000017 B801000000          <1>     mov rax, 1
-    25 0000001C BF01000000          <1>     mov rdi, 1
-    26 00000021 48BE-               <1>     mov rsi, newline_char
-    26 00000023 [1000000000000000]  <1>
-    27 0000002B BA01000000          <1>     mov rdx, 1
-    28 00000030 0F05                <1>     syscall
-    29 00000032 C3                  <1>     ret
-    30                              <1> 
-    31                              <1> ; _deb_32_hex:
-    32                              <1> ;         mov eax, edi
-    33                              <1> ;         mov edi, 1
-    34                              <1> ;         mov edx, 1
-    35                              <1> ;         mov ecx, 64     
-    36                              <1> ; .iterate:
-    37                              <1> ;         push eax
-    38                              <1> ;         sub ecx, 4
-    39                              <1> ;         sar eax, cl
-    40                              <1> ;         and eax, 0xf
-    41                              <1> ;         lea esi, [hex_codes + eax]
-    42                              <1> ;         mov eax, 1
-    43                              <1> ;         push ecx
-    44                              <1> ;         syscall
-    45                              <1> ;         pop ecx
-    46                              <1> ;         pop eax
-    47                              <1> ;         test ecx, ecx
-    48                              <1> ;         jnz .iterate
-    49                              <1> ;         ret
-    50                              <1> 
-    51                              <1> _deb_64_hex:
-    52 00000033 4889F8              <1>         mov rax, rdi
-    53 00000036 BF01000000          <1>         mov rdi, 1
-    54 0000003B BA01000000          <1>         mov rdx, 1
-    55 00000040 B940000000          <1>         mov rcx, 64     
-    56                              <1> .iterate:
-    57 00000045 50                  <1>         push rax
-    58 00000046 4883E904            <1>         sub rcx, 4
-    59 0000004A 48D3F8              <1>         sar rax, cl
-    60 0000004D 4883E00F            <1>         and rax, 0xf
-    61 00000051 488DB0[00000000]    <1>         lea rsi, [hex_codes + rax]
-    62 00000058 B801000000          <1>         mov rax, 1
-    63 0000005D 51                  <1>         push rcx
-    64 0000005E 0F05                <1>         syscall
-    65 00000060 59                  <1>         pop rcx
-    66 00000061 58                  <1>         pop rax
-    67 00000062 4885C9              <1>         test rcx, rcx
-    68 00000065 75DE                <1>         jnz .iterate
-    69 00000067 C3                  <1>         ret
-    70                              <1> 
-    71                              <1> %macro deb_32 1
-    72                              <1>         mov edi, %1
-    73                              <1>         call _deb_32_hex
-    74                              <1>         call _deb_32_endline
-    75                              <1> %endmacro
-    76                              <1> %macro deb_64 1
-    77                              <1>         mov rdi, %1
-    78                              <1>         call _deb_64_hex
-    79                              <1>         ; call _deb_64_endline
-    80                              <1> %endmacro
-    81                              <1> %macro deb_32_el 0
-    82                              <1>         call _deb_32_endline
-    83                              <1> %endmacro
-    84                              <1> %macro deb_64_el 0
-    85                              <1>         call _deb_64_endline
-    86                              <1> %endmacro
-    87                              <1> %endif
-     4                                  
-     5                                  section .data
+     2                                  
+     3                                  ; Compute the length of a string given by the user's input
+     4                                  section .data
+     5 00000000 0000000000000000                str: dq "", 0
      6                                  section .bss
      7                                  section .text
      8                                          global _start
-     9                                  
-    10                                  _start:
-    11 00000068 B804000000                      mov rax, 4
-    12                                          mul_64 5, 6
-    36 0000006D B805000000          <1>  mov rax, %1
-    37 00000072 486BC006            <1>  imul rax, %2
-    13                                          div_64 rax, 4
-    48 00000076 4889C0              <1>  mov rax, %1
-    49 00000079 BB04000000          <1>  mov rbx, %2
-    50 0000007E 99                  <1>  cdq
-    51 0000007F 48F7FB              <1>  idiv rbx
-    14                                          deb_64 rax
-    77 00000082 4889C7              <1>  mov rdi, %1
-    78 00000085 E8A9FFFFFF          <1>  call _deb_64_hex
-    79                              <1> 
-    15                                          deb_64 rax
-    77 0000008A 4889C7              <1>  mov rdi, %1
-    78 0000008D E8A1FFFFFF          <1>  call _deb_64_hex
-    79                              <1> 
-    16                                  
-    17 00000092 B83C000000                      mov rax, 60
-    18 00000097 4831FF                          xor rdi, rdi
-    19 0000009A 0F05                            syscall
+     9                                          global _str_len
+    10                                          global _get_input
+    11                                  
+    12                                  _str_len:
+    13 00000000 4831C0                          xor rax, rax
+    14                                  
+    15                                  .loop:
+    16 00000003 803C0700                        cmp byte [rdi+rax], 0
+    17 00000007 7405                            je .end
+    18 00000009 48FFC0                          inc rax
+    19 0000000C EBF5                            jmp .loop
+    20                                  
+    21                                  .end:
+    22 0000000E 48FFC8                          dec rax
+    23 00000011 C3                              ret
+    24                                  
+    25                                  _get_input:
+    26 00000012 B800000000                      mov rax, 0
+    27 00000017 BF00000000                      mov rdi, 0
+    28 0000001C 48BE-                           mov rsi, str
+    28 0000001E [0000000000000000] 
+    29 00000026 BA10000000                      mov rdx, 16
+    30 0000002B 0F05                            syscall
+    31 0000002D C3                              ret
+    32                                  
+    33                                  _start:
+    34 0000002E E8DFFFFFFF                      call _get_input
+    35                                  
+    36                                          ; mov rdi, str
+    37                                          ; call _str_len
+    38                                  
+    39 00000033 4883E801                        sub rax, 1      ; Alternatively, since <rax> holds the length of the
+    40 00000037 4889C7                          mov rdi, rax    ; input string.
+    41                                  
+    42 0000003A B83C000000                      mov rax, 60
+    43 0000003F 0F05                            syscall
