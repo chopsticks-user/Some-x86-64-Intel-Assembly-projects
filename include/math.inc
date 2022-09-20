@@ -48,11 +48,19 @@
         cdq
         idiv rdi
 %endmacro
+
+; Find the absolute value of %1
+%macro abs_32 1
+        mov eax, %1
+        mov edx, eax
+        neg eax
+        cmovl eax, edx
+%endmacro
 %macro abs_64 1
         mov rax, %1
-        mov rdx, rax
+        mov rbx, rax
         neg rax
-        cmovl rax, rdx
+        cmovl rax, rbx
 %endmacro
 
 %endif

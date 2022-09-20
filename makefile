@@ -16,7 +16,7 @@ main: main.asm
 	rm -f build/main
 	
 	nasm -f elf64 -g -F dwarf -o build/main.o -l build/main.lst main.asm
-	gcc -nostdlib -no-pie -o build/main build/main.o
+	gcc -no-pie -o build/main build/main.o
 
 	clear
 

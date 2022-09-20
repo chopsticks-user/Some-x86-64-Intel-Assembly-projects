@@ -1,213 +1,92 @@
-     1                                  ; x86_64 Intel Assembly
-     2                                  %include "include/math.inc"
-     3                              <1> ; Math utility macro functions
-     4                              <1> %ifndef MATH_INC
-     5                              <1> %define MATH_INC
-     6                              <1> 
-     7                              <1> ; Perform the addition of 2 numbers and return the result to 
-     8                              <1> ; either the register <eax> or <rax>
-     9                              <1> %macro add_32 2
-    10                              <1>         mov eax, %1
-    11                              <1>         add eax, %2
-    12                              <1> %endmacro
-    13                              <1> %macro add_64 2
-    14                              <1>         mov rax, %1
-    15                              <1>         add rax, %2
-    16                              <1> %endmacro
-    17                              <1> 
-    18                              <1> ; Perform the substraction of 2 numbers and return the result to 
-    19                              <1> ; either the register <eax> or <rax>
-    20                              <1> %macro sub_32 2
-    21                              <1>         mov eax, %1
-    22                              <1>         sub eax, %2
-    23                              <1> %endmacro
-    24                              <1> %macro sub_64 2
-    25                              <1>         mov rax, %1
-    26                              <1>         sub rax, %2
-    27                              <1> %endmacro
-    28                              <1> 
-    29                              <1> ; Multiply 2 numbers and return the result to 
-    30                              <1> ; either the register <eax> or <rax>
-    31                              <1> %macro mul_32 2
-    32                              <1>         mov eax, %1
-    33                              <1>         imul eax, %2
-    34                              <1> %endmacro
-    35                              <1> %macro mul_64 2
-    36                              <1>         mov rax, %1
-    37                              <1>         imul rax, %2
-    38                              <1> %endmacro
-    39                              <1> 
-    40                              <1> ; Devide %1 by %2
-    41                              <1> %macro div_32 2
-    42                              <1>         mov eax, %1
-    43                              <1>         mov edi, %2
-    44                              <1>         cdq
-    45                              <1>         idiv edi
-    46                              <1> %endmacro
-    47                              <1> %macro div_64 2
-    48                              <1>         mov rax, %1
-    49                              <1>         mov rdi, %2
-    50                              <1>         cdq
-    51                              <1>         idiv rdi
-    52                              <1> %endmacro
-    53                              <1> %macro abs_64 1
-    54                              <1>         mov rax, %1
-    55                              <1>         mov rdx, rax
-    56                              <1>         neg rax
-    57                              <1>         cmovl rax, rdx
-    58                              <1> %endmacro
-    59                              <1> 
-    60                              <1> %endif
-     3                                  %include "include/debug.inc"
-     4                              <1> ; Debugging utility macro functions
-     5                              <1> %ifndef DEBUG_INC
-     6                              <1> %define DEBUG_INC
-     7                              <1> 
-     8                              <1> section .data
-     9 00000000 303132333435363738- <1>         hex_codes: db "0123456789ABCDEF"
-     9 00000009 39414243444546      <1>
-    10 00000010 0A                  <1>         newline_char: db 10
-    11                              <1> section .bss
-    12                              <1> section .text
-    13                              <1>         global _deb_64_endline
-    14                              <1>         global _deb_64_hex
-    15                              <1> 
-    16                              <1> _deb_32_endline:
-    17 00000000 B801000000          <1>     mov eax, 1
-    18 00000005 BF01000000          <1>     mov edi, 1
-    19 0000000A BE[10000000]        <1>     mov esi, newline_char
-    20 0000000F BA01000000          <1>     mov edx, 1
-    21 00000014 0F05                <1>     syscall
-    22 00000016 C3                  <1>     ret
-    23                              <1> 
-    24                              <1> _deb_64_endline:
-    25 00000017 B801000000          <1>     mov rax, 1
-    26 0000001C BF01000000          <1>     mov rdi, 1
-    27 00000021 48BE-               <1>     mov rsi, newline_char
-    27 00000023 [1000000000000000]  <1>
-    28 0000002B BA01000000          <1>     mov rdx, 1
-    29 00000030 0F05                <1>     syscall
-    30 00000032 C3                  <1>     ret
-    31                              <1> 
-    32                              <1> ; _deb_32_hex:
-    33                              <1> ;         mov eax, edi
-    34                              <1> ;         mov edi, 1
-    35                              <1> ;         mov edx, 1
-    36                              <1> ;         mov ecx, 64     
-    37                              <1> ; .iterate:
-    38                              <1> ;         push eax
-    39                              <1> ;         sub ecx, 4
-    40                              <1> ;         sar eax, cl
-    41                              <1> ;         and eax, 0xf
-    42                              <1> ;         lea esi, [hex_codes + eax]
-    43                              <1> ;         mov eax, 1
-    44                              <1> ;         push ecx
-    45                              <1> ;         syscall
-    46                              <1> ;         pop ecx
-    47                              <1> ;         pop eax
-    48                              <1> ;         test ecx, ecx
-    49                              <1> ;         jnz .iterate
-    50                              <1> ;         ret
-    51                              <1> 
-    52                              <1> _deb_64_hex:
-    53 00000033 4889F8              <1>         mov rax, rdi
-    54 00000036 BF01000000          <1>         mov rdi, 1
-    55 0000003B BA01000000          <1>         mov rdx, 1
-    56 00000040 B940000000          <1>         mov rcx, 64     
-    57                              <1> .iterate:
-    58 00000045 50                  <1>         push rax
-    59 00000046 4883E904            <1>         sub rcx, 4
-    60 0000004A 48D3F8              <1>         sar rax, cl
-    61 0000004D 4883E00F            <1>         and rax, 0xf
-    62 00000051 488DB0[00000000]    <1>         lea rsi, [hex_codes + rax]
-    63 00000058 B801000000          <1>         mov rax, 1
-    64 0000005D 51                  <1>         push rcx
-    65 0000005E 0F05                <1>         syscall
-    66 00000060 59                  <1>         pop rcx
-    67 00000061 58                  <1>         pop rax
-    68 00000062 4885C9              <1>         test rcx, rcx
-    69 00000065 75DE                <1>         jnz .iterate
-    70 00000067 C3                  <1>         ret
-    71                              <1> 
-    72                              <1> %macro deb_32 1
-    73                              <1>         mov edi, %1
-    74                              <1>         call _deb_32_hex
-    75                              <1>         call _deb_32_endline
-    76                              <1> %endmacro
-    77                              <1> %macro deb_64 1
-    78                              <1>         mov rdi, %1
-    79                              <1>         call _deb_64_hex
-    80                              <1>         call _deb_64_endline
-    81                              <1> %endmacro
-    82                              <1> %macro deb_32_el 0
-    83                              <1>         call _deb_32_endline
-    84                              <1> %endmacro
-    85                              <1> %macro deb_64_el 0
-    86                              <1>         call _deb_64_endline
-    87                              <1> %endmacro
-    88                              <1> 
-    89                              <1> %endif
-     4                                  %include "include/lib.inc"
-     5                              <1> %ifndef LIB_INC
-     6                              <1> %define LIB_INC
-     7                              <1> 
-     8                              <1> section .data
-     9                              <1> section .bss
-    10                              <1> section .text
-    11                              <1> 
-    12                              <1> global _get_string_32
-    13                              <1> _get_string_32:
-    14 00000068 C3                  <1>         ret
-    15                              <1> 
-    16                              <1> global _get_string_64
-    17                              <1> _get_string_64:
-    18 00000069 C3                  <1>         ret
-    19                              <1> 
-    20                              <1> global _lib_exit_32
-    21                              <1> _lib_exit_32:
-    22 0000006A B83C000000          <1>         mov eax, 60
-    23 0000006F 0F05                <1>         syscall
-    24                              <1> 
-    25                              <1> global _lib_exit_64
-    26                              <1> _lib_exit_64:
-    27 00000071 B83C000000          <1>         mov rax, 60
-    28 00000076 0F05                <1>         syscall
-    29                              <1> 
-    30                              <1> %macro exit_32 1
-    31                              <1>         mov edi, %1
-    32                              <1>         call _lib_exit_32
-    33                              <1> %endmacro
-    34                              <1> 
-    35                              <1> %macro exit_64 1
-    36                              <1>         mov rdi, %1
-    37                              <1>         call _lib_exit_64
-    38                              <1> %endmacro
-    39                              <1> 
-    40                              <1> %endif
-     5                                  
-     6                                  section .data
-     7                                  section .bss
-     8                                  section .text
-     9                                  
-    10                                  global _start
-    11                                  _start:
-    12 00000078 55                              push rbp
-    13 00000079 4889E5                          mov rbp, rsp
-    14                                  
-    15                                          mul_64 2, 55
-    36 0000007C B802000000          <1>  mov rax, %1
-    37 00000081 486BC037            <1>  imul rax, %2
-    16                                          abs_64 rax
-    54 00000085 4889C0              <1>  mov rax, %1
-    55 00000088 4889C2              <1>  mov rdx, rax
-    56 0000008B 48F7D8              <1>  neg rax
-    57 0000008E 480F4CC2            <1>  cmovl rax, rdx
-    17                                          deb_64 rax
-    78 00000092 4889C7              <1>  mov rdi, %1
-    79 00000095 E899FFFFFF          <1>  call _deb_64_hex
-    80 0000009A E878FFFFFF          <1>  call _deb_64_endline
-    18                                  
-    19 0000009F 5D                              pop rbp
-    20                                          exit_64 rax
-    36 000000A0 4889C7              <1>  mov rdi, %1
-    37 000000A3 E8C9FFFFFF          <1>  call _lib_exit_64
+     1                                  ; ; x86_64 Intel Assembly
+     2                                  
+     3                                  ; ; %include "include/math.inc"
+     4                                  ; ; %include "include/debug.inc"
+     5                                  ; ; %include "include/lib.inc"
+     6                                  
+     7                                  ; section .data
+     8                                  ;         dec_fm: db "%d", 0x0a
+     9                                  ; section .bss
+    10                                  ; section .text
+    11                                  ;         extern printf
+    12                                  ;         extern scanf
+    13                                  
+    14                                  ; global make_array
+    15                                  ; make_array:
+    16                                  ;         push rbp
+    17                                  ;         mov rbp, rsp
+    18                                  ;         mov dword [rbp-4], 0
+    19                                  ;         jmp .l1
+    20                                  ; .l2:
+    21                                  ;         mov eax, dword [rbp-4]
+    22                                  ;         mov dword [rbp-24+rax*4], 11
+    23                                  ;         add dword [rbp-4], 1
+    24                                  ; .l1:
+    25                                  ;         cmp dword [rbp-4], 5
+    26                                  ;         jl .l2
+    27                                  ;         mov eax, dword [rbp-24]
+    28                                  ;         pop rbp
+    29                                  ;         ret
+    30                                  
+    31                                  ; global main
+    32                                  ; main:
+    33                                  ;         push rbp
+    34                                  ;         mov rbp, rsp
+    35                                  
+    36                                  ; ;         mov dword [rbp-4], 0
+    37                                  ; ;         jmp .l1
+    38                                  ; ; .l2:
+    39                                  ; ;         mov eax, dword [rbp-4]
+    40                                  ; ;         mov dword [rbp-24+rax*4], 11
+    41                                  ; ;         add dword [rbp-4], 1
+    42                                  ; ; .l1:
+    43                                  ; ;         cmp dword [rbp-4], 5
+    44                                  ; ;         jl .l2
+    45                                  
+    46                                  ;         mov edi, dword [rbp-24]
+    47                                  ;         call make_array
+    48                                  
+    49                                  ;         ; lea eax, dword [rbp-24]
+    50                                  
+    51                                  ;         lea edi, [dec_fm]
+    52                                  ;         mov esi, eax
+    53                                  ;         call printf
+    54                                  
+    55                                  ;         pop rbp
+    56                                  ;         mov rax, 60
+    57                                  ;         xor rdi, rdi
+    58                                  ;         syscall
+    59                                  
+    60                                  ; x86_64 Intel Assembly
+    61                                  
+    62                                  section .data
+    63 00000000 25640A                          dec_fm: db "%d", 0x0a
+    64                                  section .bss
+    65                                  section .text
+    66                                          extern printf
+    67                                          extern scanf
+    68                                  
+    69                                  global main
+    70                                  main:
+    71 00000000 55                              push rbp
+    72 00000001 4889E5                          mov rbp, rsp
+    73                                  
+    74 00000004 B900000000                      mov ecx, 0
+    75 00000009 EB0B                            jmp .l1
+    76                                  .l2:
+    77 0000000B C7448DEC0B000000                mov dword [rbp-20+rcx*4], 11
+    78 00000013 83C101                          add ecx, 1
+    79                                  .l1:
+    80 00000016 83F905                          cmp ecx, 5
+    81 00000019 7CF0                            jl .l2
+    82                                  
+    83 0000001B 8B45F8                          mov eax, dword [rbp-8]
+    84                                  
+    85 0000001E 8D3C25[00000000]                lea edi, [dec_fm]
+    86 00000025 89C6                            mov esi, eax
+    87 00000027 E8(00000000)                    call printf
+    88                                  
+    89 0000002C 5D                              pop rbp
+    90 0000002D B83C000000                      mov rax, 60
+    91 00000032 4831FF                          xor rdi, rdi
+    92 00000035 0F05                            syscall
