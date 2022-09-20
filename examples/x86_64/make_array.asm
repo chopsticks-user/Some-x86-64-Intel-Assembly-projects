@@ -20,7 +20,6 @@ main:
 .l1:
         cmp ecx, 5
         jl .l2
-
         mov eax, dword [rbp-8]
 
         lea edi, [dec_fm]
@@ -31,3 +30,13 @@ main:
         mov rax, 60
         xor rdi, rdi
         syscall
+
+;         mov ecx, 25
+;         lea rax, dword [rbp-100]
+;         jmp .cnd
+; .lp:
+;         sub ecx, 1
+;         mov dword [rax+4*rcx], 72
+; .cnd:
+;         test ecx, ecx
+;         jnz .lp

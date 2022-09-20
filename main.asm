@@ -1,58 +1,58 @@
-; ; x86_64 Intel Assembly
+; x86_64 Intel Assembly
 
-; ; %include "include/math.inc"
-; ; %include "include/debug.inc"
-; ; %include "include/lib.inc"
+; %include "include/math.inc"
+; %include "include/debug.inc"
+; %include "include/lib.inc"
 
-; section .data
-;         dec_fm: db "%d", 0x0a
-; section .bss
-; section .text
-;         extern printf
-;         extern scanf
+section .data
+        dec_fm: db "%d", 0x0a
+section .bss
+section .text
+        extern printf
+        extern scanf
 
-; global make_array
-; make_array:
-;         push rbp
-;         mov rbp, rsp
-;         mov dword [rbp-4], 0
-;         jmp .l1
-; .l2:
-;         mov eax, dword [rbp-4]
-;         mov dword [rbp-24+rax*4], 11
-;         add dword [rbp-4], 1
-; .l1:
-;         cmp dword [rbp-4], 5
-;         jl .l2
-;         mov eax, dword [rbp-24]
-;         pop rbp
-;         ret
+global make_array_db
+make_array_db:  ; rdi: address, rsi: length, rdx: fill value
+        push rbp
+        mov rbp, rsp
 
-; global main
-; main:
-;         push rbp
-;         mov rbp, rsp
+        jmp .cnd
+.lp:    
+        sub esi, 1
+        mov dword [rdi+4*rsi], esi
+.cnd:
+        test esi, esi
+        jnz .lp
 
-; ;         mov dword [rbp-4], 0
-; ;         jmp .l1
-; ; .l2:
-; ;         mov eax, dword [rbp-4]
-; ;         mov dword [rbp-24+rax*4], 11
-; ;         add dword [rbp-4], 1
-; ; .l1:
-; ;         cmp dword [rbp-4], 5
-; ;         jl .l2
+        pop rbp
+        ret
 
-;         mov edi, dword [rbp-24]
-;         call make_array
+global main
+main:
+        push rbp
+        mov rbp, rsp
 
-;         ; lea eax, dword [rbp-24]
+        lea rdi, dword [rbp-100]
+        mov esi, 25
+        mov edx, 111
+        call make_array_db
 
-;         lea edi, [dec_fm]
-;         mov esi, eax
-;         call printf
+;         mov ecx, 25
+;         lea rax, dword [rbp-100]
+;         jmp .cnd
+; .lp:
+;         sub ecx, 1
+;         mov dword [rax+4*rcx], 72
+; .cnd:
+;         test ecx, ecx
+;         jnz .lp
 
-;         pop rbp
-;         mov rax, 60
-;         xor rdi, rdi
-;         syscall
+        lea rax, dword [rbp-4]
+        lea rdi, [dec_fm]
+        mov rsi, rax
+        call printf
+
+        pop rbp
+        mov rax, 60
+        mov rdi, rsi
+        syscall

@@ -1,92 +1,58 @@
-     1                                  ; ; x86_64 Intel Assembly
+     1                                  ; x86_64 Intel Assembly
      2                                  
-     3                                  ; ; %include "include/math.inc"
-     4                                  ; ; %include "include/debug.inc"
-     5                                  ; ; %include "include/lib.inc"
+     3                                  ; %include "include/math.inc"
+     4                                  ; %include "include/debug.inc"
+     5                                  ; %include "include/lib.inc"
      6                                  
-     7                                  ; section .data
-     8                                  ;         dec_fm: db "%d", 0x0a
-     9                                  ; section .bss
-    10                                  ; section .text
-    11                                  ;         extern printf
-    12                                  ;         extern scanf
+     7                                  section .data
+     8 00000000 25640A                          dec_fm: db "%d", 0x0a
+     9                                  section .bss
+    10                                  section .text
+    11                                          extern printf
+    12                                          extern scanf
     13                                  
-    14                                  ; global make_array
-    15                                  ; make_array:
-    16                                  ;         push rbp
-    17                                  ;         mov rbp, rsp
-    18                                  ;         mov dword [rbp-4], 0
-    19                                  ;         jmp .l1
-    20                                  ; .l2:
-    21                                  ;         mov eax, dword [rbp-4]
-    22                                  ;         mov dword [rbp-24+rax*4], 11
-    23                                  ;         add dword [rbp-4], 1
-    24                                  ; .l1:
-    25                                  ;         cmp dword [rbp-4], 5
-    26                                  ;         jl .l2
-    27                                  ;         mov eax, dword [rbp-24]
-    28                                  ;         pop rbp
-    29                                  ;         ret
-    30                                  
-    31                                  ; global main
-    32                                  ; main:
-    33                                  ;         push rbp
-    34                                  ;         mov rbp, rsp
-    35                                  
-    36                                  ; ;         mov dword [rbp-4], 0
-    37                                  ; ;         jmp .l1
-    38                                  ; ; .l2:
-    39                                  ; ;         mov eax, dword [rbp-4]
-    40                                  ; ;         mov dword [rbp-24+rax*4], 11
-    41                                  ; ;         add dword [rbp-4], 1
-    42                                  ; ; .l1:
-    43                                  ; ;         cmp dword [rbp-4], 5
-    44                                  ; ;         jl .l2
-    45                                  
-    46                                  ;         mov edi, dword [rbp-24]
-    47                                  ;         call make_array
-    48                                  
-    49                                  ;         ; lea eax, dword [rbp-24]
-    50                                  
-    51                                  ;         lea edi, [dec_fm]
-    52                                  ;         mov esi, eax
-    53                                  ;         call printf
+    14                                  global make_array_db
+    15                                  make_array_db:  ; rdi: address, rsi: length, rdx: fill value
+    16 00000000 55                              push rbp
+    17 00000001 4889E5                          mov rbp, rsp
+    18                                  
+    19 00000004 EB06                            jmp .cnd
+    20                                  .lp:    
+    21 00000006 83EE01                          sub esi, 1
+    22 00000009 8934B7                          mov dword [rdi+4*rsi], esi
+    23                                  .cnd:
+    24 0000000C 85F6                            test esi, esi
+    25 0000000E 75F6                            jnz .lp
+    26                                  
+    27 00000010 5D                              pop rbp
+    28 00000011 C3                              ret
+    29                                  
+    30                                  global main
+    31                                  main:
+    32 00000012 55                              push rbp
+    33 00000013 4889E5                          mov rbp, rsp
+    34                                  
+    35 00000016 488D7D9C                        lea rdi, dword [rbp-100]
+    36 0000001A BE19000000                      mov esi, 25
+    37 0000001F BA6F000000                      mov edx, 111
+    38 00000024 E8D7FFFFFF                      call make_array_db
+    39                                  
+    40                                  ;         mov ecx, 25
+    41                                  ;         lea rax, dword [rbp-100]
+    42                                  ;         jmp .cnd
+    43                                  ; .lp:
+    44                                  ;         sub ecx, 1
+    45                                  ;         mov dword [rax+4*rcx], 72
+    46                                  ; .cnd:
+    47                                  ;         test ecx, ecx
+    48                                  ;         jnz .lp
+    49                                  
+    50 00000029 488D45FC                        lea rax, dword [rbp-4]
+    51 0000002D 488D3C25[00000000]              lea rdi, [dec_fm]
+    52 00000035 4889C6                          mov rsi, rax
+    53 00000038 E8(00000000)                    call printf
     54                                  
-    55                                  ;         pop rbp
-    56                                  ;         mov rax, 60
-    57                                  ;         xor rdi, rdi
-    58                                  ;         syscall
-    59                                  
-    60                                  ; x86_64 Intel Assembly
-    61                                  
-    62                                  section .data
-    63 00000000 25640A                          dec_fm: db "%d", 0x0a
-    64                                  section .bss
-    65                                  section .text
-    66                                          extern printf
-    67                                          extern scanf
-    68                                  
-    69                                  global main
-    70                                  main:
-    71 00000000 55                              push rbp
-    72 00000001 4889E5                          mov rbp, rsp
-    73                                  
-    74 00000004 B900000000                      mov ecx, 0
-    75 00000009 EB0B                            jmp .l1
-    76                                  .l2:
-    77 0000000B C7448DEC0B000000                mov dword [rbp-20+rcx*4], 11
-    78 00000013 83C101                          add ecx, 1
-    79                                  .l1:
-    80 00000016 83F905                          cmp ecx, 5
-    81 00000019 7CF0                            jl .l2
-    82                                  
-    83 0000001B 8B45F8                          mov eax, dword [rbp-8]
-    84                                  
-    85 0000001E 8D3C25[00000000]                lea edi, [dec_fm]
-    86 00000025 89C6                            mov esi, eax
-    87 00000027 E8(00000000)                    call printf
-    88                                  
-    89 0000002C 5D                              pop rbp
-    90 0000002D B83C000000                      mov rax, 60
-    91 00000032 4831FF                          xor rdi, rdi
-    92 00000035 0F05                            syscall
+    55 0000003D 5D                              pop rbp
+    56 0000003E B83C000000                      mov rax, 60
+    57 00000043 4889F7                          mov rdi, rsi
+    58 00000046 0F05                            syscall
