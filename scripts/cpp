@@ -1,0 +1,7 @@
+#!bin/bash
+
+alias run-cpp=./build/Application
+alias rcpp=./build/Application
+
+alias deb-cpp="gdb build/Application"
+alias dcpp="gdb build/Application"

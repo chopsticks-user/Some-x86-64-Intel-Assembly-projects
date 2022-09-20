@@ -1,5 +1,5 @@
      1                                  ; x86_64 Intel Assembly
-     2                                  %include "src/math.inc"
+     2                                  %include "include/math.inc"
      3                              <1> ; Math utility macro functions
      4                              <1> %ifndef MATH_INC
      5                              <1> %define MATH_INC
@@ -50,9 +50,15 @@
     50                              <1>         cdq
     51                              <1>         idiv rdi
     52                              <1> %endmacro
-    53                              <1> 
-    54                              <1> %endif
-     3                                  %include "src/debug.inc"
+    53                              <1> %macro abs_64 1
+    54                              <1>         mov rax, %1
+    55                              <1>         mov rdx, rax
+    56                              <1>         neg rax
+    57                              <1>         cmovl rax, rdx
+    58                              <1> %endmacro
+    59                              <1> 
+    60                              <1> %endif
+     3                                  %include "include/debug.inc"
      4                              <1> ; Debugging utility macro functions
      5                              <1> %ifndef DEBUG_INC
      6                              <1> %define DEBUG_INC
@@ -141,7 +147,7 @@
     87                              <1> %endmacro
     88                              <1> 
     89                              <1> %endif
-     4                                  %include "src/lib.inc"
+     4                                  %include "include/lib.inc"
      5                              <1> %ifndef LIB_INC
      6                              <1> %define LIB_INC
      7                              <1> 
@@ -182,13 +188,26 @@
      6                                  section .data
      7                                  section .bss
      8                                  section .text
-     9                                          global _start
-    10                                  
+     9                                  
+    10                                  global _start
     11                                  _start:
-    12                                          mul_64 2, 7
-    36 00000078 B802000000          <1>  mov rax, %1
-    37 0000007D 486BC007            <1>  imul rax, %2
-    13                                  
-    14                                          exit_64 0
-    36 00000081 BF00000000          <1>  mov rdi, %1
-    37 00000086 E8E6FFFFFF          <1>  call _lib_exit_64
+    12 00000078 55                              push rbp
+    13 00000079 4889E5                          mov rbp, rsp
+    14                                  
+    15                                          mul_64 2, 55
+    36 0000007C B802000000          <1>  mov rax, %1
+    37 00000081 486BC037            <1>  imul rax, %2
+    16                                          abs_64 rax
+    54 00000085 4889C0              <1>  mov rax, %1
+    55 00000088 4889C2              <1>  mov rdx, rax
+    56 0000008B 48F7D8              <1>  neg rax
+    57 0000008E 480F4CC2            <1>  cmovl rax, rdx
+    17                                          deb_64 rax
+    78 00000092 4889C7              <1>  mov rdi, %1
+    79 00000095 E899FFFFFF          <1>  call _deb_64_hex
+    80 0000009A E878FFFFFF          <1>  call _deb_64_endline
+    18                                  
+    19 0000009F 5D                              pop rbp
+    20                                          exit_64 rax
+    36 000000A0 4889C7              <1>  mov rdi, %1
+    37 000000A3 E8C9FFFFFF          <1>  call _lib_exit_64

@@ -1,14 +1,20 @@
 ; x86_64 Intel Assembly
-%include "src/math.inc"
-%include "src/debug.inc"
-%include "src/lib.inc"
+%include "include/math.inc"
+%include "include/debug.inc"
+%include "include/lib.inc"
 
 section .data
 section .bss
 section .text
-        global _start
 
+global _start
 _start:
-        mul_64 2, 7
+        push rbp
+        mov rbp, rsp
 
-        exit_64 0
+        mul_64 2, 55
+        abs_64 rax
+        deb_64 rax
+
+        pop rbp
+        exit_64 rax

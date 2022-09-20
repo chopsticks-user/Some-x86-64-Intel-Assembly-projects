@@ -1,4 +1,7 @@
 #!bin/bash
 
-alias run=./build/main
-alias deb="gdb build/main"
+alias run-asm64=./build/main
+alias ra64=./build/main
+
+alias deb-asm64="gdb build/main"
+alias da64="gdb build/main"

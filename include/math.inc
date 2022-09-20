@@ -48,5 +48,11 @@
         cdq
         idiv rdi
 %endmacro
+%macro abs_64 1
+        mov rax, %1
+        mov rdx, rax
+        neg rax
+        cmovl rax, rdx
+%endmacro
 
 %endif
