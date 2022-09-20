@@ -1,9 +1,5 @@
 ; x86_64 Intel Assembly
 
-; %include "include/math.inc"
-; %include "include/debug.inc"
-; %include "include/lib.inc"
-
 section .data
         dec_fm: db "%d", 0x0a
 section .bss
