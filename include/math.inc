@@ -101,4 +101,36 @@ _fibonacci_64:
         call _fibonacci_64
 %endmacro
 
+global _factorial_64
+_factorial_64:
+        cmp edi, 1
+        jle .case01
+        mov eax, 2
+        mov ecx, edi
+        jmp .loop_cond          ; n >= 2
+
+.loop_exec:
+        imul rax, rcx
+        dec ecx
+
+.loop_cond:
+        cmp ecx, 2
+        jg .loop_exec
+        ret
+
+.case_neg:
+        xor eax, eax            ; return 0 if n < 0
+        ret
+
+.case01:
+        cmp edi, 0              ; return 1 if n > 0 && n <= 1
+        jl .case_neg
+        mov eax, 1
+        ret
+
+%macro fact 1
+        mov rdi, %1
+        call _factorial_64
+%endmacro
+
 %endif

@@ -28,8 +28,6 @@ section .text
         syscall
 %endmacro
 
-
-
 global main
 main:
         push rbp
@@ -38,8 +36,7 @@ main:
 
         read_i64 qword [rbp-8]
 
-        mov rdi, qword [rbp-8]
-        call factorial
+        fact [rbp-8]
 
         log_i64 rax
 
