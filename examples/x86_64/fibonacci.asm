@@ -1,7 +1,5 @@
 ; x86_64 Intel Assembly
 
-%include "include/debug.inc"
-
 section .data
         dec_fm: db "%d", 0x0a
 section .bss

@@ -28,7 +28,7 @@ main:
         rep movsb
 
         lea rdi, [dec_fm]
-        mov esi, dword [rbp-8]
+        mov esi, dword [rbp-104]
         call printf
 
         pop rbp
