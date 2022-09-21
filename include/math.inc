@@ -53,6 +53,10 @@ section .text
         idiv rdi
 %endmacro
 
+; 20.00$/kwh <=> 2,000 cents/kwh
+; charge an extra of 1 cent per kwh
+; over 1000
+
 ; Find the absolute value of %1
 %macro abs_32 1
         mov eax, %1

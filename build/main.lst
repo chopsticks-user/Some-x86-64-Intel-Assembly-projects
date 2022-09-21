@@ -1,197 +1,102 @@
      1                                  ; x86 Assembly
      2                                  
-     3                                  %include "include/math.inc"
-     4                              <1> ; Math utility macro functions
-     5                              <1> %ifndef ASM_INTEL_X86_LIB_MATH_INC
-     6                              <1> %define ASM_INTEL_X86_LIB_MATH_INC
-     7                              <1> 
-     8                              <1> section .data
-     9                              <1> section .bss
-    10                              <1> section .text
-    11                              <1> 
-    12                              <1> ; Perform the addition of 2 numbers and return the result to 
-    13                              <1> ; either the register <eax> or <rax>
-    14                              <1> %macro add_32 2
-    15                              <1>         mov eax, %1
-    16                              <1>         add eax, %2
-    17                              <1> %endmacro
-    18                              <1> %macro add_64 2
-    19                              <1>         mov rax, %1
-    20                              <1>         add rax, %2
-    21                              <1> %endmacro
-    22                              <1> 
-    23                              <1> ; Perform the substraction of 2 numbers and return the result to 
-    24                              <1> ; either the register <eax> or <rax>
-    25                              <1> %macro sub_32 2
-    26                              <1>         mov eax, %1
-    27                              <1>         sub eax, %2
-    28                              <1> %endmacro
-    29                              <1> %macro sub_64 2
-    30                              <1>         mov rax, %1
-    31                              <1>         sub rax, %2
-    32                              <1> %endmacro
-    33                              <1> 
-    34                              <1> ; Multiply 2 numbers and return the result to 
-    35                              <1> ; either the register <eax> or <rax>
-    36                              <1> %macro mul_32 2
-    37                              <1>         mov eax, %1
-    38                              <1>         imul eax, %2
-    39                              <1> %endmacro
-    40                              <1> %macro mul_64 2
-    41                              <1>         mov rax, %1
-    42                              <1>         imul rax, %2
-    43                              <1> %endmacro
-    44                              <1> 
-    45                              <1> ; Devide %1 by %2
-    46                              <1> %macro div_32 2
-    47                              <1>         mov eax, %1
-    48                              <1>         mov edi, %2
-    49                              <1>         cdq
-    50                              <1>         idiv edi
-    51                              <1> %endmacro
-    52                              <1> %macro div_64 2
-    53                              <1>         mov rax, %1
-    54                              <1>         mov rdi, %2
-    55                              <1>         cdq
-    56                              <1>         idiv rdi
-    57                              <1> %endmacro
-    58                              <1> 
-    59                              <1> ; Find the absolute value of %1
-    60                              <1> %macro abs_32 1
-    61                              <1>         mov eax, %1
-    62                              <1>         mov edx, eax
-    63                              <1>         neg eax
-    64                              <1>         cmovl eax, edx
-    65                              <1> %endmacro
-    66                              <1> %macro abs_64 1
-    67                              <1>         mov rax, %1
-    68                              <1>         mov rbx, rax
-    69                              <1>         neg rax
-    70                              <1>         cmovl rax, rbx
-    71                              <1> %endmacro
-    72                              <1> 
-    73                              <1> global _fibonacci_64
-    74                              <1> _fibonacci_64:
-    75 00000000 4883FF00            <1>         cmp rdi, 0              ; if (n <= 0)
-    76 00000004 7E34                <1>         jle .c0
-    77 00000006 4883FF02            <1>         cmp rdi, 2              ; if (n <= 2)
-    78 0000000A 7E28                <1>         jle .c12
-    79                              <1> 
-    80 0000000C B903000000          <1>         mov rcx, 3              ; i = 3
-    81 00000011 B802000000          <1>         mov rax, 2              ; current = 1 (last1)
-    82 00000016 BA01000000          <1>         mov rdx, 1              ; last1 = 1
-    83 0000001B BE01000000          <1>         mov rsi, 1              ; last2 = 1
-    84 00000020 EB0C                <1>         jmp .cnd                
-    85                              <1> .lp:
-    86 00000022 4889C2              <1>         mov rdx, rax            ; last1 = current
-    87 00000025 4801F0              <1>         add rax, rsi            ; current += last2
-    88 00000028 4889D6              <1>         mov rsi, rdx            ; last2 = last1
-    89 0000002B 48FFC1              <1>         inc rcx                 ; ++i
-    90                              <1>         
-    91                              <1> .cnd
-    91          ******************  <1>  warning: label alone on a line without a colon might be in error [-w+label-orphan]
-    92 0000002E 4839F9              <1>         cmp rcx, rdi
-    93 00000031 75EF                <1>         jne .lp
-    94 00000033 C3                  <1>         ret
-    95                              <1> .c12
-    95          ******************  <1>  warning: label alone on a line without a colon might be in error [-w+label-orphan]
-    96 00000034 B801000000          <1>         mov rax, 1
-    97 00000039 C3                  <1>         ret
-    98                              <1> .c0:
-    99 0000003A 4831C0              <1>         xor rax, rax
-   100 0000003D C3                  <1>         ret
-   101                              <1> 
-   102                              <1> %macro fib_64 1
-   103                              <1>         mov rdi, %1
-   104                              <1>         call _fibonacci_64
-   105                              <1> %endmacro
-   106                              <1> 
-   107                              <1> global _factorial_64
-   108                              <1> _factorial_64:
-   109 0000003E 83FF01              <1>         cmp edi, 1
-   110 00000041 7E18                <1>         jle .case01
-   111 00000043 B802000000          <1>         mov eax, 2
-   112 00000048 89F9                <1>         mov ecx, edi
-   113 0000004A EB06                <1>         jmp .loop_cond          ; n >= 2
-   114                              <1> 
-   115                              <1> .loop_exec:
-   116 0000004C 480FAFC1            <1>         imul rax, rcx
-   117 00000050 FFC9                <1>         dec ecx
-   118                              <1> 
-   119                              <1> .loop_cond:
-   120 00000052 83F902              <1>         cmp ecx, 2
-   121 00000055 7FF5                <1>         jg .loop_exec
-   122 00000057 C3                  <1>         ret
-   123                              <1> 
-   124                              <1> .case_neg:
-   125 00000058 31C0                <1>         xor eax, eax            ; return 0 if n < 0
-   126 0000005A C3                  <1>         ret
-   127                              <1> 
-   128                              <1> .case01:
-   129 0000005B 83FF00              <1>         cmp edi, 0              ; return 1 if n > 0 && n <= 1
-   130 0000005E 7CF8                <1>         jl .case_neg
-   131 00000060 B801000000          <1>         mov eax, 1
-   132 00000065 C3                  <1>         ret
-   133                              <1> 
-   134                              <1> %macro fact 1
-   135                              <1>         mov rdi, %1
-   136                              <1>         call _factorial_64
-   137                              <1> %endmacro
-   138                              <1> 
-   139                              <1> %endif
-     4                                  
-     5                                  section .data
-     6 00000000 256C640A00                      dec_fm_p: db "%ld", 0xa, 0
-     7 00000005 256C6400                        dec_fm_s: db "%ld", 0
-     8                                  section .bss
-     9                                  section .text
-    10                                          extern scanf
-    11                                          extern printf
-    12                                  
-    13                                  %macro log_i64 1
-    14                                          lea rdi, [dec_fm_p]
-    15                                          mov rsi, %1
-    16                                          xor eax, eax
-    17                                          call printf
-    18                                  %endmacro
-    19                                  
-    20                                  %macro read_i64 1
-    21                                          lea rdi, [dec_fm_s]
-    22                                          lea rsi, %1
-    23                                          xor eax, eax
-    24                                          call scanf
-    25                                  %endmacro
-    26                                  
-    27                                  %macro exit_64 1
-    28                                          mov rax, 60
-    29                                          mov rdi, %1
-    30                                          syscall
-    31                                  %endmacro
-    32                                  
-    33                                  global main
-    34                                  main:
-    35 00000066 55                              push rbp
-    36 00000067 4889E5                          mov rbp, rsp
-    37 0000006A 4883EC10                        sub rsp, 16
-    38                                  
-    39                                          read_i64 qword [rbp-8]
-    21 0000006E 488D3C25[05000000]  <1>  lea rdi, [dec_fm_s]
-    22 00000076 488D75F8            <1>  lea rsi, %1
-    23 0000007A 31C0                <1>  xor eax, eax
-    24 0000007C E8(00000000)        <1>  call scanf
-    40                                  
-    41                                          fact [rbp-8]
-   135 00000081 488B7DF8            <1>  mov rdi, %1
-   136 00000085 E8B4FFFFFF          <1>  call _factorial_64
-    42                                  
-    43                                          log_i64 rax
-    14 0000008A 488D3C25[00000000]  <1>  lea rdi, [dec_fm_p]
-    15 00000092 4889C6              <1>  mov rsi, %1
-    16 00000095 31C0                <1>  xor eax, eax
-    17 00000097 E8(00000000)        <1>  call printf
-    44                                  
-    45 0000009C C9                              leave
-    46                                          exit_64 0
-    28 0000009D B83C000000          <1>  mov rax, 60
-    29 000000A2 BF00000000          <1>  mov rdi, %1
-    30 000000A7 0F05                <1>  syscall
+     3                                  section .data
+     4 00000000 257300                          str_fmt_s: db "%s", 0
+     5 00000003 25730A00                        str_fmt_p: db "%s", 10, 0
+     6 00000007 256C6400                        dec_fmt_s: db "%ld", 0
+     7 0000000B 256C640A00                      dec_fmt_p: db "%ld", 10, 0
+     8 00000010 00                              customer_name: db "", 0
+     9                                  section .bss
+    10                                  section .text
+    11                                          extern scanf
+    12                                          extern printf
+    13                                  
+    14                                  %macro log_i64 1
+    15                                          lea rdi, [dec_fmt_p]
+    16                                          mov rsi, %1
+    17                                          xor eax, eax
+    18                                          call printf
+    19                                  %endmacro
+    20                                  
+    21                                  %macro log_str 1
+    22                                          lea rdi, [str_fmt_p]
+    23                                          lea rsi, %1
+    24                                          xor eax, eax
+    25                                          call printf
+    26                                  %endmacro
+    27                                  
+    28                                  %macro read_i64 1
+    29                                          lea rdi, [dec_fmt_s]
+    30                                          lea rsi, %1
+    31                                          xor eax, eax
+    32                                          call scanf
+    33                                  %endmacro
+    34                                  
+    35                                  %macro read_str 1
+    36                                          lea rdi, [str_fmt_s]
+    37                                          lea rsi, %1
+    38                                          xor rax, rax
+    39                                          call scanf
+    40                                  %endmacro
+    41                                  
+    42                                  global cost
+    43                                  cost:
+    44 00000000 4881FFE8030000                  cmp rdi, 1000
+    45 00000007 7E1F                            jle .le1000
+    46 00000009 BE14000000                      mov rsi, 20
+    47 0000000E 480FAFF7                        imul rsi, rdi
+    48 00000012 4881EFE8030000                  sub rdi, 1000
+    49 00000019 4889F8                          mov rax, rdi
+    50 0000001C BF64000000                      mov rdi, 100
+    51 00000021 48F7FF                          idiv rdi
+    52 00000024 4801F0                          add rax, rsi            
+    53 00000027 C3                              ret
+    54                                  
+    55                                  .le1000:
+    56 00000028 4889F8                          mov rax, rdi
+    57 0000002B 486BC014                        imul rax, 20
+    58 0000002F BA00000000                      mov edx, 0                      ; In cents, if needed
+    59 00000034 C3                              ret
+    60                                  
+    61                                  global main
+    62                                  main:
+    63 00000035 55                              push rbp
+    64 00000036 4889E5                          mov rbp, rsp
+    65 00000039 4883EC10                        sub rsp, 16
+    66                                  
+    67                                          read_str [customer_name]        ; Get customer's name
+    36 0000003D 488D3C25[00000000]  <1>  lea rdi, [str_fmt_s]
+    37 00000045 488D3425[10000000]  <1>  lea rsi, %1
+    38 0000004D 4831C0              <1>  xor rax, rax
+    39 00000050 E8(00000000)        <1>  call scanf
+    68                                          read_i64 qword [rbp-8]          ; Get customer's electric usage
+    29 00000055 488D3C25[07000000]  <1>  lea rdi, [dec_fmt_s]
+    30 0000005D 488D75F8            <1>  lea rsi, %1
+    31 00000061 31C0                <1>  xor eax, eax
+    32 00000063 E8(00000000)        <1>  call scanf
+    69                                  
+    70 00000068 488B7DF8                        mov rdi, qword [rbp-8]
+    71 0000006C E88FFFFFFF                      call cost
+    72 00000071 488945F8                        mov qword [rbp-8], rax 
+    73 00000075 488955F0                        mov qword [rbp-16], rdx
+    74                                  
+    75                                          log_str [customer_name]         ; Print customer's name
+    22 00000079 488D3C25[03000000]  <1>  lea rdi, [str_fmt_p]
+    23 00000081 488D3425[10000000]  <1>  lea rsi, %1
+    24 00000089 31C0                <1>  xor eax, eax
+    25 0000008B E8(00000000)        <1>  call printf
+    76                                          log_i64 qword [rbp-8]           ; Print the amount of dollars 
+    15 00000090 488D3C25[0B000000]  <1>  lea rdi, [dec_fmt_p]
+    16 00000098 488B75F8            <1>  mov rsi, %1
+    17 0000009C 31C0                <1>  xor eax, eax
+    18 0000009E E8(00000000)        <1>  call printf
+    77                                          log_i64 qword [rbp-16]          ; Print the amount of cents
+    15 000000A3 488D3C25[0B000000]  <1>  lea rdi, [dec_fmt_p]
+    16 000000AB 488B75F0            <1>  mov rsi, %1
+    17 000000AF 31C0                <1>  xor eax, eax
+    18 000000B1 E8(00000000)        <1>  call printf
+    78                                  
+    79 000000B6 C9                              leave
+    80 000000B7 B83C000000                      mov rax, 60
+    81 000000BC BF00000000                      mov rdi, 0
+    82 000000C1 0F05                            syscall
