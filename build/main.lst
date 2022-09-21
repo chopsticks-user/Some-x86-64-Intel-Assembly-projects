@@ -1,133 +1,83 @@
-     1                                  ; x86_64 Intel Assembly
+     1                                  ; x86 Assembly
      2                                  
-     3                                  %include "include/math.inc"
-     4                              <1> ; Math utility macro functions
-     5                              <1> %ifndef MATH_INC
-     6                              <1> %define MATH_INC
-     7                              <1> 
-     8                              <1> section .data
-     9                              <1> section .bss
-    10                              <1> section .text
-    11                              <1> 
-    12                              <1> ; Perform the addition of 2 numbers and return the result to 
-    13                              <1> ; either the register <eax> or <rax>
-    14                              <1> %macro add_32 2
-    15                              <1>         mov eax, %1
-    16                              <1>         add eax, %2
-    17                              <1> %endmacro
-    18                              <1> %macro add_64 2
-    19                              <1>         mov rax, %1
-    20                              <1>         add rax, %2
-    21                              <1> %endmacro
-    22                              <1> 
-    23                              <1> ; Perform the substraction of 2 numbers and return the result to 
-    24                              <1> ; either the register <eax> or <rax>
-    25                              <1> %macro sub_32 2
-    26                              <1>         mov eax, %1
-    27                              <1>         sub eax, %2
-    28                              <1> %endmacro
-    29                              <1> %macro sub_64 2
-    30                              <1>         mov rax, %1
-    31                              <1>         sub rax, %2
-    32                              <1> %endmacro
-    33                              <1> 
-    34                              <1> ; Multiply 2 numbers and return the result to 
-    35                              <1> ; either the register <eax> or <rax>
-    36                              <1> %macro mul_32 2
-    37                              <1>         mov eax, %1
-    38                              <1>         imul eax, %2
-    39                              <1> %endmacro
-    40                              <1> %macro mul_64 2
-    41                              <1>         mov rax, %1
-    42                              <1>         imul rax, %2
-    43                              <1> %endmacro
-    44                              <1> 
-    45                              <1> ; Devide %1 by %2
-    46                              <1> %macro div_32 2
-    47                              <1>         mov eax, %1
-    48                              <1>         mov edi, %2
-    49                              <1>         cdq
-    50                              <1>         idiv edi
-    51                              <1> %endmacro
-    52                              <1> %macro div_64 2
-    53                              <1>         mov rax, %1
-    54                              <1>         mov rdi, %2
-    55                              <1>         cdq
-    56                              <1>         idiv rdi
-    57                              <1> %endmacro
-    58                              <1> 
-    59                              <1> ; Find the absolute value of %1
-    60                              <1> %macro abs_32 1
-    61                              <1>         mov eax, %1
-    62                              <1>         mov edx, eax
-    63                              <1>         neg eax
-    64                              <1>         cmovl eax, edx
-    65                              <1> %endmacro
-    66                              <1> %macro abs_64 1
-    67                              <1>         mov rax, %1
-    68                              <1>         mov rbx, rax
-    69                              <1>         neg rax
-    70                              <1>         cmovl rax, rbx
-    71                              <1> %endmacro
-    72                              <1> 
-    73                              <1> global fibonacci
-    74                              <1> fibonacci:
-    75 00000000 4883FF00            <1>         cmp rdi, 0              ; if (n <= 0)
-    76 00000004 7E34                <1>         jle .c0
-    77 00000006 4883FF02            <1>         cmp rdi, 2              ; if (n <= 2)
-    78 0000000A 7E28                <1>         jle .c12
-    79                              <1> 
-    80 0000000C B903000000          <1>         mov rcx, 3              ; i = 3
-    81 00000011 B802000000          <1>         mov rax, 2              ; current = 1 (last1)
-    82 00000016 BA01000000          <1>         mov rdx, 1              ; last1 = 1
-    83 0000001B BE01000000          <1>         mov rsi, 1              ; last2 = 1
-    84 00000020 EB0C                <1>         jmp .cnd                
-    85                              <1> .lp:
-    86 00000022 4889C2              <1>         mov rdx, rax            ; last1 = current
-    87 00000025 4801F0              <1>         add rax, rsi            ; current += last2
-    88 00000028 4889D6              <1>         mov rsi, rdx            ; last2 = last1
-    89 0000002B 48FFC1              <1>         inc rcx                 ; ++i
-    90                              <1>         
-    91                              <1> .cnd
-    91          ******************  <1>  warning: label alone on a line without a colon might be in error [-w+label-orphan]
-    92 0000002E 4839F9              <1>         cmp rcx, rdi
-    93 00000031 75EF                <1>         jne .lp
-    94 00000033 C3                  <1>         ret
-    95                              <1> .c12
-    95          ******************  <1>  warning: label alone on a line without a colon might be in error [-w+label-orphan]
-    96 00000034 B801000000          <1>         mov rax, 1
-    97 00000039 C3                  <1>         ret
-    98                              <1> .c0:
-    99 0000003A 4831C0              <1>         xor rax, rax
-   100 0000003D C3                  <1>         ret
-   101                              <1> 
-   102                              <1> %macro fib_64 1
-   103                              <1>         mov rdi, %1
-   104                              <1>         call fibonacci
-   105                              <1> %endmacro
-   106                              <1> 
-   107                              <1> %endif
-     4                                  
-     5                                  section .data
-     6 00000000 25640A                          dec_fm: db "%d", 0x0a
-     7                                  section .bss
-     8                                  section .text
+     3                                  section .data
+     4 00000000 256C640A00                      dec_fm_p: db "%ld", 0xa, 0
+     5 00000005 256C6400                        dec_fm_s: db "%ld", 0
+     6                                  section .bss
+     7                                  section .text
+     8                                          extern scanf
      9                                          extern printf
     10                                  
-    11                                  global main
-    12                                  main:
-    13 0000003E 55                              push rbp
-    14 0000003F 4889E5                          mov rbp, rsp
-    15                                  
-    16                                          fib_64 500
-   103 00000042 BFF4010000          <1>  mov rdi, %1
-   104 00000047 E8B4FFFFFF          <1>  call fibonacci
+    11                                  %macro log_i64 1
+    12                                          lea rdi, [dec_fm_p]
+    13                                          mov rsi, %1
+    14                                          xor eax, eax
+    15                                          call printf
+    16                                  %endmacro
     17                                  
-    18 0000004C 488D3C25[00000000]              lea rdi, [dec_fm]
-    19 00000054 4889C6                          mov rsi, rax
-    20 00000057 E8(00000000)                    call printf
-    21                                  
-    22 0000005C 5D                              pop rbp
-    23 0000005D B83C000000                      mov rax, 60
-    24 00000062 4831FF                          xor rdi, rdi
-    25 00000065 0F05                            syscall
+    18                                  %macro read_i64 1
+    19                                          lea rdi, [dec_fm_s]
+    20                                          lea rsi, %1
+    21                                          xor eax, eax
+    22                                          call scanf
+    23                                  %endmacro
+    24                                  
+    25                                  %macro exit_64 1
+    26                                          mov rax, 60
+    27                                          mov rdi, %1
+    28                                          syscall
+    29                                  %endmacro
+    30                                  
+    31                                  global factorial
+    32                                  factorial:
+    33 00000000 83FF01                          cmp edi, 1
+    34 00000003 7E18                            jle .case01
+    35 00000005 B802000000                      mov eax, 2
+    36 0000000A 89F9                            mov ecx, edi
+    37 0000000C EB06                            jmp .loop_cond          ; n >= 2
+    38                                  
+    39                                  .loop_exec:
+    40 0000000E 480FAFC1                        imul rax, rcx
+    41 00000012 FFC9                            dec ecx
+    42                                  
+    43                                  .loop_cond:
+    44 00000014 83F902                          cmp ecx, 2
+    45 00000017 7FF5                            jg .loop_exec
+    46 00000019 C3                              ret
+    47                                  
+    48                                  .case_neg:
+    49 0000001A 31C0                            xor eax, eax            ; return 0 if n < 0
+    50 0000001C C3                              ret
+    51                                  
+    52                                  .case01:
+    53 0000001D 83FF00                          cmp edi, 0              ; return 1 if n > 0 && n <= 1
+    54 00000020 7CF8                            jl .case_neg
+    55 00000022 B801000000                      mov eax, 1
+    56 00000027 C3                              ret
+    57                                  
+    58                                  global main
+    59                                  main:
+    60 00000028 55                              push rbp
+    61 00000029 4889E5                          mov rbp, rsp
+    62 0000002C 4883EC10                        sub rsp, 16
+    63                                  
+    64                                          read_i64 qword [rbp-8]
+    19 00000030 488D3C25[05000000]  <1>  lea rdi, [dec_fm_s]
+    20 00000038 488D75F8            <1>  lea rsi, %1
+    21 0000003C 31C0                <1>  xor eax, eax
+    22 0000003E E8(00000000)        <1>  call scanf
+    65                                  
+    66 00000043 488B7DF8                        mov rdi, qword [rbp-8]
+    67 00000047 E8B4FFFFFF                      call factorial
+    68                                  
+    69                                          log_i64 rax
+    12 0000004C 488D3C25[00000000]  <1>  lea rdi, [dec_fm_p]
+    13 00000054 4889C6              <1>  mov rsi, %1
+    14 00000057 31C0                <1>  xor eax, eax
+    15 00000059 E8(00000000)        <1>  call printf
+    70                                  
+    71 0000005E C9                              leave
+    72                                          exit_64 0
+    26 0000005F B83C000000          <1>  mov rax, 60
+    27 00000064 BF00000000          <1>  mov rdi, %1
+    28 00000069 0F05                <1>  syscall

@@ -22,57 +22,74 @@ _Z3fibi:
 	movq	%rsp, %rbp	#,
 	.cfi_def_cfa_register 6
 	movl	%edi, -20(%rbp)	# n, n
-# Application.cpp:5:     int a = 0, b = 1, c, i;
-	.loc 1 5 9
-	movl	$0, -4(%rbp)	#, a
-# Application.cpp:5:     int a = 0, b = 1, c, i;
-	.loc 1 5 16
-	movl	$1, -8(%rbp)	#, b
-# Application.cpp:6:     if( n == 0)
-	.loc 1 6 5
+# Application.cpp:5:     if( n == 0)
+	.loc 1 5 5
 	cmpl	$0, -20(%rbp)	#, n
 	jne	.L2	#,
-# Application.cpp:7:         return a;
-	.loc 1 7 16
-	movl	-4(%rbp), %eax	# a, _4
+# Application.cpp:6:         return 0;
+	.loc 1 6 16
+	movl	$0, %eax	#, _5
 	jmp	.L3	#
 .L2:
-# Application.cpp:8:     for(i = 2; i <= n; i++)
-	.loc 1 8 11
-	movl	$2, -12(%rbp)	#, i
-# Application.cpp:8:     for(i = 2; i <= n; i++)
-	.loc 1 8 5
-	jmp	.L4	#
-.L5:
-# Application.cpp:10:        c = a + b;
-	.loc 1 10 10 discriminator 3
-	movl	-4(%rbp), %edx	# a, tmp88
-	movl	-8(%rbp), %eax	# b, tmp89
-	addl	%edx, %eax	# tmp88, tmp87
-	movl	%eax, -16(%rbp)	# tmp87, c
-# Application.cpp:11:        a = b;
-	.loc 1 11 10 discriminator 3
-	movl	-8(%rbp), %eax	# b, tmp90
-	movl	%eax, -4(%rbp)	# tmp90, a
-# Application.cpp:12:        b = c;
-	.loc 1 12 10 discriminator 3
-	movl	-16(%rbp), %eax	# c, tmp91
-	movl	%eax, -8(%rbp)	# tmp91, b
-# Application.cpp:8:     for(i = 2; i <= n; i++)
-	.loc 1 8 5 discriminator 3
-	addl	$1, -12(%rbp)	#, i
+# Application.cpp:7:     if (n == 1 || n == 2)
+	.loc 1 7 5
+	cmpl	$1, -20(%rbp)	#, n
+	je	.L4	#,
+# Application.cpp:7:     if (n == 1 || n == 2)
+	.loc 1 7 16 discriminator 1
+	cmpl	$2, -20(%rbp)	#, n
+	jne	.L5	#,
 .L4:
-# Application.cpp:8:     for(i = 2; i <= n; i++)
-	.loc 1 8 18 discriminator 1
-	movl	-12(%rbp), %eax	# i, tmp92
-	cmpl	-20(%rbp), %eax	# n, tmp92
-	jle	.L5	#,
-# Application.cpp:14:     return b;
-	.loc 1 14 12
-	movl	-8(%rbp), %eax	# b, _4
+# Application.cpp:8:         return 1;
+	.loc 1 8 16
+	movl	$1, %eax	#, _5
+	jmp	.L3	#
+.L5:
+# Application.cpp:9:     int a = 2, b = 1, c = 1;
+	.loc 1 9 9
+	movl	$2, -4(%rbp)	#, a
+# Application.cpp:9:     int a = 2, b = 1, c = 1;
+	.loc 1 9 16
+	movl	$1, -8(%rbp)	#, b
+# Application.cpp:9:     int a = 2, b = 1, c = 1;
+	.loc 1 9 23
+	movl	$1, -12(%rbp)	#, c
+.LBB2:
+# Application.cpp:10:     for(int i = 3; i <= n; i++)
+	.loc 1 10 13
+	movl	$3, -16(%rbp)	#, i
+# Application.cpp:10:     for(int i = 3; i <= n; i++)
+	.loc 1 10 5
+	jmp	.L6	#
+.L7:
+# Application.cpp:12:        b = a;
+	.loc 1 12 10 discriminator 3
+	movl	-4(%rbp), %eax	# a, tmp84
+	movl	%eax, -8(%rbp)	# tmp84, b
+# Application.cpp:13:        a += c;
+	.loc 1 13 10 discriminator 3
+	movl	-12(%rbp), %eax	# c, tmp85
+	addl	%eax, -4(%rbp)	# tmp85, a
+# Application.cpp:14:        c = b;
+	.loc 1 14 10 discriminator 3
+	movl	-8(%rbp), %eax	# b, tmp86
+	movl	%eax, -12(%rbp)	# tmp86, c
+# Application.cpp:10:     for(int i = 3; i <= n; i++)
+	.loc 1 10 5 discriminator 3
+	addl	$1, -16(%rbp)	#, i
+.L6:
+# Application.cpp:10:     for(int i = 3; i <= n; i++)
+	.loc 1 10 22 discriminator 1
+	movl	-16(%rbp), %eax	# i, tmp87
+	cmpl	-20(%rbp), %eax	# n, tmp87
+	jle	.L7	#,
+.LBE2:
+# Application.cpp:16:     return b;
+	.loc 1 16 12
+	movl	-8(%rbp), %eax	# b, _5
 .L3:
-# Application.cpp:15: }
-	.loc 1 15 1
+# Application.cpp:17: }
+	.loc 1 17 1
 	popq	%rbp	#
 	.cfi_def_cfa 7, 8
 	ret	
@@ -83,7 +100,7 @@ _Z3fibi:
 	.type	main, @function
 main:
 .LFB1725:
-	.loc 1 19 1
+	.loc 1 21 1
 	.cfi_startproc
 	pushq	%rbp	#
 	.cfi_def_cfa_offset 16
@@ -91,13 +108,13 @@ main:
 	movq	%rsp, %rbp	#,
 	.cfi_def_cfa_register 6
 	subq	$16, %rsp	#,
-# Application.cpp:20:     int n = fib(500);
-	.loc 1 20 16
-	movl	$500, %edi	#,
+# Application.cpp:22:     int n = fib(6);
+	.loc 1 22 16
+	movl	$6, %edi	#,
 	call	_Z3fibi	#
 	movl	%eax, -4(%rbp)	# tmp85, n
-# Application.cpp:21:     std::cout << n << '\n';
-	.loc 1 21 23
+# Application.cpp:23:     std::cout << n << '\n';
+	.loc 1 23 23
 	movl	-4(%rbp), %eax	# n, tmp86
 	movl	%eax, %esi	# tmp86,
 	leaq	_ZSt4cout(%rip), %rax	#, tmp87
@@ -106,11 +123,11 @@ main:
 	movl	$10, %esi	#,
 	movq	%rax, %rdi	# _1,
 	call	_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_c@PLT	#
-# Application.cpp:22:     return 0;
-	.loc 1 22 12
+# Application.cpp:24:     return 0;
+	.loc 1 24 12
 	movl	$0, %eax	#, _8
-# Application.cpp:23: }
-	.loc 1 23 1
+# Application.cpp:25: }
+	.loc 1 25 1
 	leave	
 	.cfi_def_cfa 7, 8
 	ret	
@@ -120,7 +137,7 @@ main:
 	.type	_Z41__static_initialization_and_destruction_0ii, @function
 _Z41__static_initialization_and_destruction_0ii:
 .LFB2221:
-	.loc 1 23 1
+	.loc 1 25 1
 	.cfi_startproc
 	pushq	%rbp	#
 	.cfi_def_cfa_offset 16
@@ -130,14 +147,14 @@ _Z41__static_initialization_and_destruction_0ii:
 	subq	$16, %rsp	#,
 	movl	%edi, -4(%rbp)	# __initialize_p, __initialize_p
 	movl	%esi, -8(%rbp)	# __priority, __priority
-# Application.cpp:23: }
-	.loc 1 23 1
+# Application.cpp:25: }
+	.loc 1 25 1
 	cmpl	$1, -4(%rbp)	#, __initialize_p
-	jne	.L10	#,
-# Application.cpp:23: }
-	.loc 1 23 1 is_stmt 0 discriminator 1
+	jne	.L12	#,
+# Application.cpp:25: }
+	.loc 1 25 1 is_stmt 0 discriminator 1
 	cmpl	$65535, -8(%rbp)	#, __priority
-	jne	.L10	#,
+	jne	.L12	#,
 # /usr/include/c++/11/iostream:74:   static ios_base::Init __ioinit;
 	.file 2 "/usr/include/c++/11/iostream"
 	.loc 2 74 25 is_stmt 1
@@ -151,9 +168,9 @@ _Z41__static_initialization_and_destruction_0ii:
 	movq	_ZNSt8ios_base4InitD1Ev@GOTPCREL(%rip), %rax	#, tmp86
 	movq	%rax, %rdi	# tmp85,
 	call	__cxa_atexit@PLT	#
-.L10:
-# Application.cpp:23: }
-	.loc 1 23 1
+.L12:
+# Application.cpp:25: }
+	.loc 1 25 1
 	nop	
 	leave	
 	.cfi_def_cfa 7, 8
@@ -164,15 +181,15 @@ _Z41__static_initialization_and_destruction_0ii:
 	.type	_GLOBAL__sub_I__Z3fibi, @function
 _GLOBAL__sub_I__Z3fibi:
 .LFB2222:
-	.loc 1 23 1
+	.loc 1 25 1
 	.cfi_startproc
 	pushq	%rbp	#
 	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp	#,
 	.cfi_def_cfa_register 6
-# Application.cpp:23: }
-	.loc 1 23 1
+# Application.cpp:25: }
+	.loc 1 25 1
 	movl	$65535, %esi	#,
 	movl	$1, %edi	#,
 	call	_Z41__static_initialization_and_destruction_0ii	#
@@ -226,7 +243,7 @@ _GLOBAL__sub_I__Z3fibi:
 	.file 39 "/usr/include/c++/11/system_error"
 	.section	.debug_info,"",@progbits
 .Ldebug_info0:
-	.long	0x238c
+	.long	0x239e
 	.value	0x5
 	.byte	0x1
 	.byte	0x8
@@ -4506,7 +4523,7 @@ _GLOBAL__sub_I__Z3fibi:
 	.uleb128 0x56
 	.long	.LASF371
 	.byte	0x1
-	.byte	0x12
+	.byte	0x14
 	.byte	0x5
 	.long	0x112
 	.quad	.LFB1725
@@ -4516,7 +4533,7 @@ _GLOBAL__sub_I__Z3fibi:
 	.long	0x231d
 	.uleb128 0x13
 	.string	"n"
-	.byte	0x14
+	.byte	0x16
 	.byte	0x9
 	.long	0x112
 	.uleb128 0x2
@@ -4534,7 +4551,7 @@ _GLOBAL__sub_I__Z3fibi:
 	.quad	.LFE1724-.LFB1724
 	.uleb128 0x1
 	.byte	0x9c
-	.long	0x2381
+	.long	0x2393
 	.uleb128 0x58
 	.string	"n"
 	.byte	0x1
@@ -4546,7 +4563,7 @@ _GLOBAL__sub_I__Z3fibi:
 	.sleb128 -36
 	.uleb128 0x13
 	.string	"a"
-	.byte	0x5
+	.byte	0x9
 	.byte	0x9
 	.long	0x112
 	.uleb128 0x2
@@ -4554,7 +4571,7 @@ _GLOBAL__sub_I__Z3fibi:
 	.sleb128 -20
 	.uleb128 0x13
 	.string	"b"
-	.byte	0x5
+	.byte	0x9
 	.byte	0x10
 	.long	0x112
 	.uleb128 0x2
@@ -4562,20 +4579,24 @@ _GLOBAL__sub_I__Z3fibi:
 	.sleb128 -24
 	.uleb128 0x13
 	.string	"c"
-	.byte	0x5
+	.byte	0x9
 	.byte	0x17
 	.long	0x112
 	.uleb128 0x2
 	.byte	0x91
-	.sleb128 -32
+	.sleb128 -28
+	.uleb128 0x59
+	.quad	.LBB2
+	.quad	.LBE2-.LBB2
 	.uleb128 0x13
 	.string	"i"
-	.byte	0x5
-	.byte	0x1a
+	.byte	0xa
+	.byte	0xd
 	.long	0x112
 	.uleb128 0x2
 	.byte	0x91
-	.sleb128 -28
+	.sleb128 -32
+	.byte	0
 	.byte	0
 	.uleb128 0x8
 	.byte	0x10
@@ -5232,7 +5253,7 @@ _GLOBAL__sub_I__Z3fibi:
 	.sleb128 1
 	.uleb128 0x3b
 	.uleb128 0x21
-	.sleb128 23
+	.sleb128 25
 	.uleb128 0x39
 	.uleb128 0x21
 	.sleb128 1
@@ -6035,6 +6056,15 @@ _GLOBAL__sub_I__Z3fibi:
 	.uleb128 0x13
 	.uleb128 0x2
 	.uleb128 0x18
+	.byte	0
+	.byte	0
+	.uleb128 0x59
+	.uleb128 0xb
+	.byte	0x1
+	.uleb128 0x11
+	.uleb128 0x1
+	.uleb128 0x12
+	.uleb128 0x7
 	.byte	0
 	.byte	0
 	.byte	0

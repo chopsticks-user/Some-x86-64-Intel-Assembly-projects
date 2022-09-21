@@ -1,5 +1,5 @@
-%ifndef ARRAY_INC
-%define ARRAY_INC
+%ifndef ASM_INTEL_X86_LIB_ARRAY_INC
+%define ASM_INTEL_X86_LIB_ARRAY_INC
 
 section .data
 section .bss

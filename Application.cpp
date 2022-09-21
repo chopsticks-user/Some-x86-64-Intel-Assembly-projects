@@ -2,22 +2,23 @@
 
 int fib(int n)
 {
-    int a = 0, b = 1, c, i;
     if( n == 0)
-        return a;
-    for(i = 2; i <= n; i++)
+        return 0;
+    if (n == 1 || n == 2)
+        return 1;
+    int a = 2, b = 1, c = 1;
+    for(int i = 3; i <= n; i++)
     {
-       c = a + b;
-       a = b;
-       b = c;
+       b = a;
+       a += c;
+       c = b;
     }
     return b;
 }
- 
 
 int main()
 {
-    int n = fib(500);
+    int n = fib(6);
     std::cout << n << '\n';
     return 0;
 }

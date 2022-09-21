@@ -1,6 +1,6 @@
 ; Math utility macro functions
-%ifndef MATH_INC
-%define MATH_INC
+%ifndef ASM_INTEL_X86_LIB_MATH_INC
+%define ASM_INTEL_X86_LIB_MATH_INC
 
 section .data
 section .bss

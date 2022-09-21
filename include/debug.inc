@@ -1,6 +1,6 @@
 ; Debugging utility macro functions
-%ifndef DEBUG_INC
-%define DEBUG_INC
+%ifndef ASM_INTEL_X86_LIB_DEBUG_INC
+%define ASM_INTEL_X86_LIB_DEBUG_INC
 
 section .data
         hex_codes: db "0123456789ABCDEF"
